@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="steeeve">
+  <meta name="description" content="Timely provides simple conversion between various times.">
+  <title>Timely | A minimal time conversion site.</title>
+  <link rel="stylesheet" href="milligram.min.css">
+</head>
+
+<body>
+  <div class="row">
+    <div class="column">
+      <label>Millisecond epoch</label>
+      <input type="text" placeholder="epoch" id="epoch" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <label>RFC3339</label>
+      <input type="text" id="rfc3339" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <label>Timestamp pieces</label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+      <input type="text" placeholder="YYYY" id="year" />
+    </div>
+    <div class="column">
+      <input type="text" placeholder="MM" id="month" />
+    </div>
+    <div class="column">
+      <input type="text" placeholder="DD" id="day" />
+    </div>
+    <div class="column">
+      <input type="text" placeholder="hh" id="hour" />
+    </div>
+    <div class="column">
+      <input type="text" placeholder="mm" id="minute" />
+    </div>
+    <div class="column">
+      <input type="text" placeholder="ss" id="second" />
+    </div>
+  </div>
+
+</body>
+
+<script>
+  var
+    epoch = document.getElementById("epoch"),
+    year = document.getElementById("year"),
+    month = document.getElementById("month"),
+    day = document.getElementById("day"),
+    hour = document.getElementById("hour"),
+    minute = document.getElementById("minute"),
+    second = document.getElementById("second"),
+    rfc3339 = document.getElementById("rfc3339");
+
+  epoch.onkeyup = () => calculateDate(epoch, rfc3339);
+
+  function calculateDate(inDiv, outDiv) {
+    let time = +inDiv.value;
+    let date = new Date(time);
+    outDiv.value = makeRFC3339(date);
+  }
+
+  function numPad(n) {
+    return n < 10 ? n : '0' + n;
+  }
+
+  function makeRFC3339(date) {
+    return date.getUTCFullYear() + "-"
+      + numPad((date.getUTCMonth() + 1)) + "-"
+      + numPad(date.getUTCDate()) + "T"
+      + numPad(date.getUTCHours()) + ":"
+      + numPad(date.getUTCMinutes()) + ":"
+      + numPad(date.getUTCSeconds()) + "Z";
+  }
+</script>
+
+</html>
