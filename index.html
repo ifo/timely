@@ -67,7 +67,7 @@
   epoch.onkeyup = () => calculateDate(epoch, rfc3339);
 
   function calculateDate(inDiv, outDiv) {
-    let time = +inDiv.value;
+    let time = parseInt(inDiv.value, 10);
     let date = new Date(time);
     outDiv.value = makeRFC3339(date);
   }
