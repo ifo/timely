@@ -53,6 +53,7 @@
 
 </body>
 
+<script src="js/moment.js"></script>
 <script>
   var
     epoch = document.getElementById("epoch"),
@@ -72,17 +73,8 @@
     outDiv.value = makeRFC3339(date);
   }
 
-  function numPad(n) {
-    return n < 10 ? n : '0' + n;
-  }
-
-  function makeRFC3339(date) {
-    return date.getUTCFullYear() + "-"
-      + numPad((date.getUTCMonth() + 1)) + "-"
-      + numPad(date.getUTCDate()) + "T"
-      + numPad(date.getUTCHours()) + ":"
-      + numPad(date.getUTCMinutes()) + ":"
-      + numPad(date.getUTCSeconds()) + "Z";
+  function makeRFC3339(epoch) {
+    return moment(epoch).format("YYYY-MM-DDThh:mm:ss") + "Z"
   }
 </script>
 
