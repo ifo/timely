@@ -70,11 +70,7 @@
   function calculateDate(inDiv, outDiv) {
     let time = parseInt(inDiv.value, 10);
     let date = new Date(time);
-    outDiv.value = makeRFC3339(date);
-  }
-
-  function makeRFC3339(epoch) {
-    return moment(epoch).format("YYYY-MM-DDThh:mm:ss") + "Z"
+    outDiv.value = moment(date).utc().format();
   }
 </script>
 
