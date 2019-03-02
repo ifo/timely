@@ -20,8 +20,22 @@
 
   <div class="row">
     <div class="column">
+      <label>Second Epoch</label>
+      <input type="text" placeholder="second epoch" id="secondEpoch" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
       <label>RFC3339</label>
       <input type="text" id="rfc3339" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <label>RFC3339 Milliseconds</label>
+      <input type="text" id="rfc3339milli" />
     </div>
   </div>
 
@@ -55,22 +69,71 @@
 
 <script src="js/moment.js"></script>
 <script>
-  var milliEpoch = document.getElementById("milliEpoch")
-    , year = document.getElementById("year")
-    , month = document.getElementById("month")
-    , day = document.getElementById("day")
-    , hour = document.getElementById("hour")
-    , minute = document.getElementById("minute")
-    , second = document.getElementById("second")
-    , rfc3339 = document.getElementById("rfc3339")
+  var milliEpoch = new function () { this.elem = document.getElementById("milliEpoch"); }
+    , secondEpoch = new function () { this.elem = document.getElementById("secondEpoch"); }
+    , rfc3339 = new function () { this.elem = document.getElementById("rfc3339"); }
+    , rfc3339milli = new function () { this.elem = document.getElementById("rfc3339milli"); }
+    , parts = new function () {
+      this.year = document.getElementById("year");
+      this.month = document.getElementById("month");
+      this.day = document.getElementById("day");
+      this.hour = document.getElementById("hour");
+      this.minute = document.getElementById("minute");
+      this.second = document.getElementById("second");
+      this.arr = [this.year, this.month, this.day, this.hour, this.minute, this.second];
+    }
+    , timeElements = [milliEpoch, secondEpoch, rfc3339, rfc3339milli, parts]
     ;
 
-  milliEpoch.onkeyup = () => calculateDate(milliEpoch, rfc3339);
+  milliEpoch.set = function(time) { this.elem.value = moment(time).valueOf(); };
+  secondEpoch.set = function(time) { this.elem.value = moment(time).unix(); };
+  rfc3339.set = function(time) { this.elem.value = moment(time).utc().format(); };
+  rfc3339milli.set = function(time) { this.elem.value = moment(time).utc().toISOString(); };
+  parts.set = function(time) {
+    let t = moment(time).utc();
+    this.year.value = t.year();
+    this.month.value = t.month() + 1;
+    this.day.value = t.date();
+    this.hour.value = t.hour();
+    this.minute.value = t.minute();
+    this.second.value = t.second();
+  };
 
-  function calculateDate(inDiv, outDiv) {
-    let time = parseInt(inDiv.value, 10);
-    let date = new Date(time);
-    outDiv.value = moment(date).utc().format();
+  milliEpoch.get = function() { return moment(parseInt(this.elem.value, 10)); };
+  secondEpoch.get = function() { return moment.unix(parseInt(this.elem.value, 10)); };
+  rfc3339.get = function() { return moment(this.elem.value); };
+  rfc3339milli.get = function() { return moment(this.elem.value); };
+  parts.get = function (time) {
+    let d = new Date(
+      this.year.value,
+      this.month.value - 1,
+      this.day.value,
+      this.hour.value,
+      this.minute.value,
+      this.second.value
+    )
+    return moment(d);
+  };
+
+  milliEpoch.elem.onkeyup = () => updateTimes(milliEpoch, filterSelf(milliEpoch, timeElements));
+  secondEpoch.elem.onkeyup = () => updateTimes(secondEpoch, filterSelf(secondEpoch, timeElements));
+  rfc3339.elem.onkeyup = () => updateTimes(rfc3339, filterSelf(rfc3339, timeElements));
+  rfc3339milli.elem.onkeyup = () => updateTimes(rfc3339milli, filterSelf(rfc3339milli, timeElements));
+  parts.arr.forEach(element => {
+    element.onkeyup = () => updateTimes(parts, filterSelf(parts, timeElements));
+  });
+
+  function updateTimes(from, toArray) {
+    let time = from.get();
+    toArray.forEach(element => {
+      element.set(time);
+    });
+  }
+
+  function filterSelf(elem, elements) {
+    return elements.filter(e => {
+      return e != elem;
+    });
   }
 </script>
 
