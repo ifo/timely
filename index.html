@@ -13,6 +13,38 @@
 <body>
   <div class="row">
     <div class="column">
+      <label>Desired hour offset</label>
+      <select id="offset">
+        <option value="-11:00">-11:00</option>
+        <option value="-10:00">-10:00</option>
+        <option value="-09:00">-09:00</option>
+        <option value="-08:00">-08:00</option>
+        <option value="-07:00">-07:00</option>
+        <option value="-06:00">-06:00</option>
+        <option value="-05:00">-05:00</option>
+        <option value="-04:00">-04:00</option>
+        <option value="-03:00">-03:00</option>
+        <option value="-02:00">-02:00</option>
+        <option value="-01:00">-01:00</option>
+        <option value="+00:00">+00:00 (UTC)</option>
+        <option value="+01:00">+01:00</option>
+        <option value="+02:00">+02:00</option>
+        <option value="+03:00">+03:00</option>
+        <option value="+04:00">+04:00</option>
+        <option value="+05:00">+05:00</option>
+        <option value="+06:00">+06:00</option>
+        <option value="+07:00">+07:00</option>
+        <option value="+08:00">+08:00</option>
+        <option value="+09:00">+09:00</option>
+        <option value="+10:00">+10:00</option>
+        <option value="+11:00">+11:00</option>
+        <option value="+12:00">+12:00</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
       <label>Millisecond Epoch</label>
       <input type="text" placeholder="millisecond epoch" id="milliEpoch" />
     </div>
@@ -72,19 +104,12 @@
       <input type="text" placeholder="ss" id="second" />
     </div>
   </div>
-
-  <div class="row">
-    <div class="column">
-      <label>Local timezone offset</label>
-      <input type="text" id="timezone" />
-    </div>
-  </div>
-
 </body>
 
 <script src="js/moment.js"></script>
 <script>
-  var milliEpoch = new function () { this.elem = document.getElementById("milliEpoch"); }
+  var offset = document.getElementById("offset")
+    , milliEpoch = new function () { this.elem = document.getElementById("milliEpoch"); }
     , secondEpoch = new function () { this.elem = document.getElementById("secondEpoch"); }
     , rfc3339 = new function () { this.elem = document.getElementById("rfc3339"); }
     , rfc3339milli = new function () { this.elem = document.getElementById("rfc3339milli"); }
@@ -98,30 +123,28 @@
       this.arr = [this.year, this.month, this.day, this.hour, this.minute, this.second];
     }
     , timeElements = [milliEpoch, secondEpoch, rfc3339, rfc3339milli, parts]
-    , timezoneDiv = document.getElementById("timezone")
     ;
 
-  timezoneDiv.value = moment().format("ZZ");
+  setSelectValue(offset, moment().format("Z"));
 
-  milliEpoch.set = function(time) { this.elem.value = moment(time).valueOf(); };
-  secondEpoch.set = function(time) { this.elem.value = moment(time).unix(); };
-  rfc3339.set = function(time) { this.elem.value = moment(time).utc().format(); };
-  rfc3339milli.set = function(time) { this.elem.value = moment(time).utc().toISOString(); };
+  milliEpoch.set = function(time, _) { this.elem.value = time.valueOf(); };
+  secondEpoch.set = function(time, _) { this.elem.value = time.unix(); };
+  rfc3339.set = function(time) { this.elem.value = time.format(); };
+  rfc3339milli.set = function(time) { this.elem.value = time.toISOString(); };
   parts.set = function(time) {
-    let t = moment(time).utc();
-    this.year.value = t.year();
-    this.month.value = t.month() + 1;
-    this.day.value = t.date();
-    this.hour.value = t.hour();
-    this.minute.value = t.minute();
-    this.second.value = t.second();
+    this.year.value = time.year();
+    this.month.value = time.month() + 1;
+    this.day.value = time.date();
+    this.hour.value = time.hour();
+    this.minute.value = time.minute();
+    this.second.value = time.second();
   };
 
   milliEpoch.get = function() { return moment(parseInt(this.elem.value, 10)); };
   secondEpoch.get = function() { return moment.unix(parseInt(this.elem.value, 10)); };
   rfc3339.get = function() { return moment(this.elem.value); };
   rfc3339milli.get = function() { return moment(this.elem.value); };
-  parts.get = function (time) {
+  parts.get = function () {
     let d = new Date(
       this.year.value,
       this.month.value - 1,
@@ -133,16 +156,24 @@
     return moment(d);
   };
 
-  milliEpoch.elem.onkeyup = () => updateTimes(milliEpoch, filterSelf(milliEpoch, timeElements));
-  secondEpoch.elem.onkeyup = () => updateTimes(secondEpoch, filterSelf(secondEpoch, timeElements));
-  rfc3339.elem.onkeyup = () => updateTimes(rfc3339, filterSelf(rfc3339, timeElements));
-  rfc3339milli.elem.onkeyup = () => updateTimes(rfc3339milli, filterSelf(rfc3339milli, timeElements));
+  offset.onchange = () => {
+    if (milliEpoch.elem.value !== "") {
+      let time = milliEpoch.get();
+      updateTimes(time.utcOffset(offset.value), timeElements)
+    } else {
+      updateTimes(moment().utcOffset(offset.value), timeElements)
+    }
+  }
+
+  milliEpoch.elem.onkeyup = () => updateTimes(milliEpoch.get().utcOffset(offset.value), filterSelf(milliEpoch, timeElements));
+  secondEpoch.elem.onkeyup = () => updateTimes(secondEpoch.get().utcOffset(offset.value), filterSelf(secondEpoch, timeElements));
+  rfc3339.elem.onkeyup = () => updateTimes(rfc3339.get().utcOffset(offset.value), filterSelf(rfc3339, timeElements));
+  rfc3339milli.elem.onkeyup = () => updateTimes(rfc3339milli.get().utcOffset(offset.value), filterSelf(rfc3339milli, timeElements));
   parts.arr.forEach(element => {
-    element.onkeyup = () => updateTimes(parts, filterSelf(parts, timeElements));
+    element.onkeyup = () => updateTimes(parts.get().utcOffset(offset.value), filterSelf(parts, timeElements));
   });
 
-  function updateTimes(from, toArray) {
-    let time = from.get();
+  function updateTimes(time, toArray) {
     toArray.forEach(element => {
       element.set(time);
     });
@@ -152,6 +183,15 @@
     return elements.filter(e => {
       return e != elem;
     });
+  }
+
+  function setSelectValue(elem, value) {
+    for (let i = 0; i < elem.options.length; i++) {
+      if (elem.options[i].value == value) {
+        elem.options[i].selected = true;
+        return;
+      }
+    }
   }
 </script>
 
