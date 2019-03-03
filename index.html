@@ -103,6 +103,9 @@
     <div class="column">
       <input type="text" placeholder="ss" id="second" />
     </div>
+    <div class="column">
+      <input type="text" placeholder="Z" id="partsOffset" />
+    </div>
   </div>
 </body>
 
@@ -120,7 +123,8 @@
       this.hour = document.getElementById("hour");
       this.minute = document.getElementById("minute");
       this.second = document.getElementById("second");
-      this.arr = [this.year, this.month, this.day, this.hour, this.minute, this.second];
+      this.offset = document.getElementById("partsOffset")
+      this.arr = [this.year, this.month, this.day, this.hour, this.minute, this.second, this.offset];
     }
     , timeElements = [milliEpoch, secondEpoch, rfc3339, rfc3339milli, parts]
     ;
@@ -138,6 +142,7 @@
     this.hour.value = time.hour();
     this.minute.value = time.minute();
     this.second.value = time.second();
+    this.offset.value = time.format("Z");
   };
 
   milliEpoch.get = function() { return moment(parseInt(this.elem.value, 10)); };
@@ -153,7 +158,7 @@
       this.minute.value,
       this.second.value
     )
-    return moment(d);
+    return moment(d).utcOffset(this.offset.value);
   };
 
   offset.onchange = () => {
