@@ -48,6 +48,10 @@
       <label>Millisecond Epoch</label>
       <input type="text" placeholder="millisecond epoch" id="milliEpoch" />
     </div>
+    <div class="column">
+      <label>Current Millisecond Epoch</label>
+      <input type="text" id="currentMilliEpoch" />
+    </div>
   </div>
 
   <div class="row">
@@ -55,27 +59,31 @@
       <label>Unix Epoch</label>
       <input type="text" placeholder="unix epoch" id="unixEpoch" />
     </div>
+    <div class="column">
+      <label>Current Unix Epoch</label>
+      <input type="text" id="currentUnixEpoch" />
+    </div>
   </div>
 
   <div class="row">
     <div class="column">
       <label>RFC3339</label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="column">
       <input type="text" id="rfc3339" />
+    </div>
+    <div class="column">
+      <label>Current RFC3339</label>
+      <input type="text" id="currentRFC3339" />
     </div>
   </div>
 
   <div class="row">
     <div class="column">
       <label>RFC3339 Milliseconds</label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="column">
       <input type="text" id="rfc3339milli" />
+    </div>
+    <div class="column">
+      <label>Current RFC3339 Milliseconds</label>
+      <input type="text" id="currentRFC3339milli" />
     </div>
   </div>
 
@@ -127,9 +135,23 @@
       this.arr = [this.year, this.month, this.day, this.hour, this.minute, this.second, this.offset];
     }
     , timeElements = [milliEpoch, unixEpoch, rfc3339, rfc3339milli, parts]
+    , currentMilliEpoch = document.getElementById("currentMilliEpoch")
+    , currentUnixEpoch = document.getElementById("currentUnixEpoch")
+    , currentRFC3339 = document.getElementById("currentRFC3339")
+    , currentRFC3339milli = document.getElementById("currentRFC3339milli")
     ;
 
+  // Set the initial offset to the local one.
   setSelectValue(offset, moment().format("Z"));
+
+  // Set all of the current times.
+  (function() {
+    let t = moment();
+    currentMilliEpoch.value = t.valueOf();
+    currentUnixEpoch.value = t.unix();
+    currentRFC3339.value = t.format();
+    currentRFC3339milli.value = t.toISOString();
+  })();
 
   milliEpoch.set = function(time, _) { this.elem.value = time.valueOf(); };
   unixEpoch.set = function(time, _) { this.elem.value = time.unix(); };
