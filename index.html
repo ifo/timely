@@ -28,6 +28,10 @@
   <div class="row">
     <div class="column">
       <label>RFC3339</label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
       <input type="text" id="rfc3339" />
     </div>
   </div>
@@ -35,6 +39,10 @@
   <div class="row">
     <div class="column">
       <label>RFC3339 Milliseconds</label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
       <input type="text" id="rfc3339milli" />
     </div>
   </div>
@@ -63,6 +71,12 @@
     <div class="column">
       <input type="text" placeholder="ss" id="second" />
     </div>
+
+  <div class="row">
+    <div class="column">
+      <label>Local timezone offset</label>
+      <input type="text" id="timezone" />
+    </div>
   </div>
 
 </body>
@@ -83,7 +97,10 @@
       this.arr = [this.year, this.month, this.day, this.hour, this.minute, this.second];
     }
     , timeElements = [milliEpoch, secondEpoch, rfc3339, rfc3339milli, parts]
+    , timezoneDiv = document.getElementById("timezone")
     ;
+
+  timezoneDiv.value = moment().format("ZZ");
 
   milliEpoch.set = function(time) { this.elem.value = moment(time).valueOf(); };
   secondEpoch.set = function(time) { this.elem.value = moment(time).unix(); };
