@@ -81,7 +81,7 @@
 
 </body>
 
-<script src="js/moment.js"></script>
+<script src="js/dayjs.min.js"></script>
 <script>
   var milliEpoch = new function () { this.elem = document.getElementById("milliEpoch"); }
     , secondEpoch = new function () { this.elem = document.getElementById("secondEpoch"); }
@@ -100,14 +100,14 @@
     , timezoneDiv = document.getElementById("timezone")
     ;
 
-  timezoneDiv.value = moment().format("ZZ");
+  timezoneDiv.value = dayjs().format("ZZ");
 
-  milliEpoch.set = function(time) { this.elem.value = moment(time).valueOf(); };
-  secondEpoch.set = function(time) { this.elem.value = moment(time).unix(); };
-  rfc3339.set = function(time) { this.elem.value = moment(time).utc().format(); };
-  rfc3339milli.set = function(time) { this.elem.value = moment(time).utc().toISOString(); };
+  milliEpoch.set = function(time) { this.elem.value = dayjs(time).valueOf(); };
+  secondEpoch.set = function(time) { this.elem.value = dayjs(time).unix(); };
+  rfc3339.set = function(time) { this.elem.value = dayjs(time).format(); };
+  rfc3339milli.set = function(time) { this.elem.value = dayjs(time).toISOString(); };
   parts.set = function(time) {
-    let t = moment(time).utc();
+    let t = dayjs(time);
     this.year.value = t.year();
     this.month.value = t.month() + 1;
     this.day.value = t.date();
@@ -116,10 +116,10 @@
     this.second.value = t.second();
   };
 
-  milliEpoch.get = function() { return moment(parseInt(this.elem.value, 10)); };
-  secondEpoch.get = function() { return moment.unix(parseInt(this.elem.value, 10)); };
-  rfc3339.get = function() { return moment(this.elem.value); };
-  rfc3339milli.get = function() { return moment(this.elem.value); };
+  milliEpoch.get = function() { return dayjs(parseInt(this.elem.value, 10)); };
+  secondEpoch.get = function() { return dayjs.unix(parseInt(this.elem.value, 10)); };
+  rfc3339.get = function() { return dayjs(this.elem.value); };
+  rfc3339milli.get = function() { return dayjs(this.elem.value); };
   parts.get = function (time) {
     let d = new Date(
       this.year.value,
@@ -129,7 +129,7 @@
       this.minute.value,
       this.second.value
     )
-    return moment(d);
+    return dayjs(d);
   };
 
   milliEpoch.elem.onkeyup = () => updateTimes(milliEpoch, filterSelf(milliEpoch, timeElements));
