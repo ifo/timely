@@ -52,8 +52,8 @@
 
   <div class="row">
     <div class="column">
-      <label>Second Epoch</label>
-      <input type="text" placeholder="second epoch" id="secondEpoch" />
+      <label>Unix Epoch</label>
+      <input type="text" placeholder="unix epoch" id="unixEpoch" />
     </div>
   </div>
 
@@ -113,7 +113,7 @@
 <script>
   var offset = document.getElementById("offset")
     , milliEpoch = new function () { this.elem = document.getElementById("milliEpoch"); }
-    , secondEpoch = new function () { this.elem = document.getElementById("secondEpoch"); }
+    , unixEpoch = new function () { this.elem = document.getElementById("unixEpoch"); }
     , rfc3339 = new function () { this.elem = document.getElementById("rfc3339"); }
     , rfc3339milli = new function () { this.elem = document.getElementById("rfc3339milli"); }
     , parts = new function () {
@@ -126,13 +126,13 @@
       this.offset = document.getElementById("partsOffset")
       this.arr = [this.year, this.month, this.day, this.hour, this.minute, this.second, this.offset];
     }
-    , timeElements = [milliEpoch, secondEpoch, rfc3339, rfc3339milli, parts]
+    , timeElements = [milliEpoch, unixEpoch, rfc3339, rfc3339milli, parts]
     ;
 
   setSelectValue(offset, moment().format("Z"));
 
   milliEpoch.set = function(time, _) { this.elem.value = time.valueOf(); };
-  secondEpoch.set = function(time, _) { this.elem.value = time.unix(); };
+  unixEpoch.set = function(time, _) { this.elem.value = time.unix(); };
   rfc3339.set = function(time) { this.elem.value = time.format(); };
   rfc3339milli.set = function(time) { this.elem.value = time.toISOString(); };
   parts.set = function(time) {
@@ -146,7 +146,7 @@
   };
 
   milliEpoch.get = function() { return moment(parseInt(this.elem.value, 10)); };
-  secondEpoch.get = function() { return moment.unix(parseInt(this.elem.value, 10)); };
+  unixEpoch.get = function() { return moment.unix(parseInt(this.elem.value, 10)); };
   rfc3339.get = function() { return moment(this.elem.value); };
   rfc3339milli.get = function() { return moment(this.elem.value); };
   parts.get = function () {
@@ -171,7 +171,7 @@
   }
 
   milliEpoch.elem.onkeyup = () => updateTimes(milliEpoch.get().utcOffset(offset.value), filterSelf(milliEpoch, timeElements));
-  secondEpoch.elem.onkeyup = () => updateTimes(secondEpoch.get().utcOffset(offset.value), filterSelf(secondEpoch, timeElements));
+  unixEpoch.elem.onkeyup = () => updateTimes(unixEpoch.get().utcOffset(offset.value), filterSelf(unixEpoch, timeElements));
   rfc3339.elem.onkeyup = () => updateTimes(rfc3339.get().utcOffset(offset.value), filterSelf(rfc3339, timeElements));
   rfc3339milli.elem.onkeyup = () => updateTimes(rfc3339milli.get().utcOffset(offset.value), filterSelf(rfc3339milli, timeElements));
   parts.arr.forEach(element => {
