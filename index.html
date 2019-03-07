@@ -153,8 +153,8 @@
     currentRFC3339milli.value = t.toISOString();
   })();
 
-  milliEpoch.set = function(time, _) { this.elem.value = time.valueOf(); };
-  unixEpoch.set = function(time, _) { this.elem.value = time.unix(); };
+  milliEpoch.set = function(time) { this.elem.value = time.valueOf(); };
+  unixEpoch.set = function(time) { this.elem.value = time.unix(); };
   rfc3339.set = function(time) { this.elem.value = time.format(); };
   rfc3339milli.set = function(time) { this.elem.value = time.toISOString(); };
   parts.set = function(time) {
