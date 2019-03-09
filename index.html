@@ -89,6 +89,17 @@
 
   <div class="row">
     <div class="column">
+      <label>RFC2822</label>
+      <input type="text" id="rfc2822" />
+    </div>
+    <div class="column">
+      <label>Current RFC2822</label>
+      <input type="text" id="currentRFC2822" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
       <label>Timestamp pieces</label>
     </div>
   </div>
@@ -124,6 +135,7 @@
     , unixEpoch = new function () { this.elem = document.getElementById("unixEpoch"); }
     , rfc3339 = new function () { this.elem = document.getElementById("rfc3339"); }
     , rfc3339milli = new function () { this.elem = document.getElementById("rfc3339milli"); }
+    , rfc2822 = new function() { this.elem = document.getElementById("rfc2822")}
     , parts = new function () {
       this.year = document.getElementById("year");
       this.month = document.getElementById("month");
@@ -134,11 +146,12 @@
       this.offset = document.getElementById("partsOffset")
       this.arr = [this.year, this.month, this.day, this.hour, this.minute, this.second, this.offset];
     }
-    , timeElements = [milliEpoch, unixEpoch, rfc3339, rfc3339milli, parts]
+    , timeElements = [milliEpoch, unixEpoch, rfc3339, rfc3339milli, rfc2822, parts]
     , currentMilliEpoch = document.getElementById("currentMilliEpoch")
     , currentUnixEpoch = document.getElementById("currentUnixEpoch")
     , currentRFC3339 = document.getElementById("currentRFC3339")
     , currentRFC3339milli = document.getElementById("currentRFC3339milli")
+    , currentRFC2822 = document.getElementById("currentRFC2822")
     ;
 
   // Set the initial offset to the local one.
@@ -151,12 +164,14 @@
     currentUnixEpoch.value = t.unix();
     currentRFC3339.value = t.format();
     currentRFC3339milli.value = t.toISOString();
+    currentRFC2822.value = t.format("ddd MMM D HH:mm:ss YYYY ZZ");
   })();
 
   milliEpoch.set = function(time) { this.elem.value = time.valueOf(); };
   unixEpoch.set = function(time) { this.elem.value = time.unix(); };
   rfc3339.set = function(time) { this.elem.value = time.format(); };
   rfc3339milli.set = function(time) { this.elem.value = time.toISOString(); };
+  rfc2822.set = function(time) { this.elem.value = time.format("ddd MMM D HH:mm:ss YYYY ZZ"); };
   parts.set = function(time) {
     this.year.value = time.year();
     this.month.value = time.month() + 1;
@@ -171,6 +186,7 @@
   unixEpoch.get = function() { return moment.unix(parseInt(this.elem.value, 10)); };
   rfc3339.get = function() { return moment(this.elem.value); };
   rfc3339milli.get = function() { return moment(this.elem.value); };
+  rfc2822.get = function() { return moment(this.elem.value); };
   parts.get = function () {
     let d = new Date(
       this.year.value,
@@ -196,6 +212,7 @@
   unixEpoch.elem.onkeyup = () => updateTimes(unixEpoch.get().utcOffset(offset.value), filterSelf(unixEpoch, timeElements));
   rfc3339.elem.onkeyup = () => updateTimes(rfc3339.get().utcOffset(offset.value), filterSelf(rfc3339, timeElements));
   rfc3339milli.elem.onkeyup = () => updateTimes(rfc3339milli.get().utcOffset(offset.value), filterSelf(rfc3339milli, timeElements));
+  rfc2822.elem.onkeyup = () => updateTimes(rfc2822.get().utcOffset(offset.value), filterSelf(rfc2822, timeElements));
   parts.arr.forEach(element => {
     element.onkeyup = () => updateTimes(parts.get().utcOffset(offset.value), filterSelf(parts, timeElements));
   });
