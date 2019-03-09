@@ -208,13 +208,14 @@
     }
   }
 
-  milliEpoch.elem.onkeyup = () => updateTimes(milliEpoch.get().utcOffset(offset.value), filterSelf(milliEpoch, timeElements));
-  unixEpoch.elem.onkeyup = () => updateTimes(unixEpoch.get().utcOffset(offset.value), filterSelf(unixEpoch, timeElements));
-  rfc3339.elem.onkeyup = () => updateTimes(rfc3339.get().utcOffset(offset.value), filterSelf(rfc3339, timeElements));
-  rfc3339milli.elem.onkeyup = () => updateTimes(rfc3339milli.get().utcOffset(offset.value), filterSelf(rfc3339milli, timeElements));
-  rfc2822.elem.onkeyup = () => updateTimes(rfc2822.get().utcOffset(offset.value), filterSelf(rfc2822, timeElements));
-  parts.arr.forEach(element => {
-    element.onkeyup = () => updateTimes(parts.get().utcOffset(offset.value), filterSelf(parts, timeElements));
+  timeElements.forEach(element => {
+    if (Array.isArray(element.arr)) {
+      element.arr.forEach(e => {
+        e.onkeyup = () => updateTimes(element.get().utcOffset(offset.value), filterSelf(element, timeElements));
+      })
+    } else {
+      element.elem.onkeyup = () => updateTimes(element.get().utcOffset(offset.value), filterSelf(element, timeElements));
+    }
   });
 
   function updateTimes(time, toArray) {
